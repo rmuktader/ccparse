@@ -95,6 +95,7 @@ def _extract_balance_summary(rows: list[list[dict]]) -> BalanceSummary:
     # of the label word on the same row — handles the two-column page layout.
     label_map = {
         "PreviousBalance":   "previous_balance",
+        "Payments":          "payments",
         "Purchases":         "purchases",
         "OtherCredits":      "credits",
         "FeesCharged":       "fees",
@@ -212,14 +213,19 @@ def _extract_transactions(pages, year: int, billing_end_month: int) -> List[Tran
     return transactions
 
 
-def _validate_balance(summary: BalanceSummary) -> None:
-    calculated = (
+def _calculate_balance(summary: BalanceSummary) -> Decimal:
+    return (
         summary.previous_balance
+        + summary.payments
         + summary.purchases
         - summary.credits
         + summary.fees
         + summary.interest
     )
+
+
+def _validate_balance(summary: BalanceSummary) -> None:
+    calculated = _calculate_balance(summary)
     if calculated != summary.new_balance:
         raise BalanceMismatchError(
             f"Balance mismatch: calculated={calculated}, stated={summary.new_balance}"
