@@ -16,6 +16,7 @@ class Transaction:
 @dataclass(frozen=True)
 class BalanceSummary:
     previous_balance: Decimal
+    payments: Decimal
     purchases: Decimal
     credits: Decimal
     fees: Decimal

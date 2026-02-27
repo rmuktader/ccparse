@@ -52,6 +52,7 @@ class TestValidateBalance:
     def _summary(self, **overrides):
         defaults = dict(
             previous_balance=Decimal("-1516.49"),
+            payments=Decimal("0.00"),
             purchases=Decimal("365.47"),
             credits=Decimal("0.00"),
             fees=Decimal("0.00"),
