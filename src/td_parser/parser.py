@@ -6,7 +6,7 @@ from typing import List
 
 import pdfplumber
 
-from .exceptions import BalanceMismatchError, DataIntegrityError
+from .exceptions import BalanceMismatchError, DataIntegrityError, UnsupportedFormatError
 from .models import BalanceSummary, Statement, Transaction
 
 # ---------------------------------------------------------------------------
@@ -226,10 +226,25 @@ def _validate_balance(summary: BalanceSummary) -> None:
         )
 
 
+# Fingerprint tokens that uniquely identify a TD Business Visa statement.
+_VISA_FINGERPRINTS = {"TDBUSINESSSOLUTIONS", "SummaryOfAccountActivity", "PreviousBalance"}
+
+
+def _assert_visa_statement(rows: list[list[dict]], pdf_path: str) -> None:
+    all_text = "".join(w["text"] for row in rows for w in row)
+    missing = [f for f in _VISA_FINGERPRINTS if f not in all_text]
+    if missing:
+        raise UnsupportedFormatError(
+            f"{pdf_path!r} is not a TD Business Solutions Visa statement. "
+            f"Missing expected markers: {missing}"
+        )
+
+
 class TDStatementParser:
     def parse(self, pdf_path: str) -> Statement:
         with pdfplumber.open(pdf_path) as pdf:
             page1_rows = _words_by_row(pdf.pages[0])
+            _assert_visa_statement(page1_rows, pdf_path)
 
             header  = _extract_header(page1_rows)
             balance = _extract_balance_summary(page1_rows)
