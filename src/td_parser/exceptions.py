@@ -6,3 +6,6 @@ class BalanceMismatchError(TDParserError):
 
 class DataIntegrityError(TDParserError):
     pass
+
+class UnsupportedFormatError(TDParserError):
+    pass
