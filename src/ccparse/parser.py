@@ -138,7 +138,7 @@ def _extract_balance_summary(rows: list[list[dict]]) -> BalanceSummary:
     return BalanceSummary(**values)
 
 
-def _extract_points(rows: list[list[dict]]) -> int:
+def _extract_points(rows: list[list[dict]]) -> int | None:
     for row in rows:
         if "NewPointsBalance" in "".join(w["text"] for w in row):
             for w in reversed(row):
@@ -146,7 +146,7 @@ def _extract_points(rows: list[list[dict]]) -> int:
                     return int(w["text"].replace(",", ""))
                 except ValueError:
                     continue
-    raise DataIntegrityError("NewPointsBalance not found")
+    return None
 
 
 def _extract_transactions(pages, year: int, billing_end_month: int) -> List[Transaction]:
@@ -247,7 +247,8 @@ def _assert_visa_statement(rows: list[list[dict]], pdf_path: str) -> None:
 
 
 class TDStatementParser:
-    def parse(self, pdf_path: str) -> Statement:
+    def _extract(self, pdf_path: str) -> Statement:
+        """Extract all fields without balance validation."""
         with pdfplumber.open(pdf_path) as pdf:
             page1_rows = _words_by_row(pdf.pages[0])
             _assert_visa_statement(page1_rows, pdf_path)
@@ -263,8 +264,6 @@ class TDStatementParser:
                 pdf.pages, billing_end.year, billing_end.month
             )
 
-        _validate_balance(balance)
-
         return Statement(
             entity_name=header.get("entity", ""),
             primary_cardholder=header.get("cardholder", ""),
@@ -275,3 +274,12 @@ class TDStatementParser:
             current_points=points,
             transactions=transactions,
         )
+
+    def parse(self, pdf_path: str) -> Statement:
+        stmt = self._extract(pdf_path)
+        _validate_balance(stmt.balance_summary)
+        return stmt
+
+    def parse_unvalidated(self, pdf_path: str) -> Statement:
+        """Parse without raising on balance mismatch. Use for diagnostics only."""
+        return self._extract(pdf_path)

@@ -34,5 +34,5 @@ class Statement:
     billing_period_start: date
     billing_period_end: date
     balance_summary: BalanceSummary
-    current_points: int
+    current_points: int | None
     transactions: List[Transaction] = field(default_factory=list)
