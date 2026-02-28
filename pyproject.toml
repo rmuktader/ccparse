@@ -3,16 +3,16 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "td-parser-pro"
-version = "0.1.0"
-description = "Extract and normalize financial data from TD Business Solutions Visa PDF statements."
+name = "ccparse"
+version = "0.1.1"
+description = "Parse credit card PDF statements into structured financial data. Currently supports TD Business Solutions Visa."
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.11"
 authors = [
     { name = "Rayhan Muktader", email = "rmuktader@gmail.com" }
 ]
-keywords = ["td bank", "pdf", "finance", "statement", "parser", "accounting"]
+keywords = ["credit card", "pdf", "finance", "statement", "parser", "accounting", "td bank"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -29,10 +29,10 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/rmuktader/td-parser-pro"
+Repository = "https://github.com/rmuktader/ccparse"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/td_parser"]
+packages = ["src/ccparse"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

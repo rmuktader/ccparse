@@ -1,4 +1,4 @@
-# td-parser-pro
+# ccparse
 
 A Python library for extracting high-fidelity financial data from TD Business Solutions Visa "born-digital" PDF statements.
 
@@ -20,7 +20,7 @@ Parses transactions, balance summaries, and rewards points into structured domai
 ## Installation
 
 ```bash
-pip install td-parser-pro
+pip install ccparse
 ```
 
 Requires Python 3.11+.
@@ -30,7 +30,7 @@ Requires Python 3.11+.
 ## Quick Start
 
 ```python
-from td_parser import TDStatementParser
+from ccparse import TDStatementParser
 
 parser = TDStatementParser()
 statement = parser.parse("path/to/statement.pdf")
@@ -56,8 +56,8 @@ print(statement.current_points)  # 6050
 ### Pandas Export
 
 ```python
-from td_parser import TDStatementParser
-from td_parser.export import to_df
+from ccparse import TDStatementParser
+from ccparse.export import to_df
 
 statement = TDStatementParser().parse("path/to/statement.pdf")
 df = to_df(statement)
@@ -75,7 +75,7 @@ print(df.dtypes)
 ## Error Handling
 
 ```python
-from td_parser import TDStatementParser, BalanceMismatchError, DataIntegrityError
+from ccparse import TDStatementParser, BalanceMismatchError, DataIntegrityError
 
 try:
     statement = TDStatementParser().parse("path/to/statement.pdf")
@@ -134,8 +134,8 @@ class BalanceSummary:
 ## Development
 
 ```bash
-git clone https://github.com/rmuktader/td-parser-pro
-cd td-parser-pro
+git clone https://github.com/rmuktader/ccparse
+cd ccparse
 uv sync
 uv run pytest tests/ -v
 ```

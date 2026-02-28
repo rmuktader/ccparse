@@ -5,9 +5,9 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from td_parser import TDStatementParser, BalanceMismatchError, DataIntegrityError
-from td_parser.models import BalanceSummary
-from td_parser.parser import _parse_amount, _parse_date, _validate_balance
+from ccparse import TDStatementParser, BalanceMismatchError, DataIntegrityError
+from ccparse.models import BalanceSummary
+from ccparse.parser import _parse_amount, _parse_date, _validate_balance
 
 PDF_PATH = Path(__file__).parent.parent / "docs" / "View PDF Statement_2024-08-03.pdf"
 
@@ -139,21 +139,21 @@ class TestRewards:
 
 class TestDataFrameExport:
     def test_returns_dataframe(self, statement):
-        from td_parser.export import to_df
+        from ccparse.export import to_df
         df = to_df(statement)
         assert isinstance(df, pd.DataFrame)
 
     def test_row_count(self, statement):
-        from td_parser.export import to_df
+        from ccparse.export import to_df
         df = to_df(statement)
         assert len(df) == 2
 
     def test_activity_date_dtype(self, statement):
-        from td_parser.export import to_df
+        from ccparse.export import to_df
         df = to_df(statement)
         assert pd.api.types.is_datetime64_any_dtype(df["activity_date"])
 
     def test_post_date_dtype(self, statement):
-        from td_parser.export import to_df
+        from ccparse.export import to_df
         df = to_df(statement)
         assert pd.api.types.is_datetime64_any_dtype(df["post_date"])
