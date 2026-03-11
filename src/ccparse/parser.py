@@ -129,8 +129,7 @@ def _extract_balance_summary(rows: list[list[dict]]) -> BalanceSummary:
                 amount = -abs(amount)
             values[key] = amount
 
-    missing = [k for k in label_map.values() if k not in values]
-    if missing:
+    if missing := [k for k in label_map.values() if k not in values]:
         raise DataIntegrityError(f"Missing balance fields: {missing}")
 
     return BalanceSummary(**values)
