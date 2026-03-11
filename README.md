@@ -226,11 +226,12 @@ uv run pytest tests/ -v
 
 ### Running Tests
 
-All 28 tests validate:
+All 66 tests validate:
 - Unit tests for amount/date parsing and balance validation
 - Integration tests for full statement parsing
-- DataFrame export functionality
+- Export functionality (Pandas, CSV, OFX, QBO)
 - Golden Equation validation
+- Backward compatibility
 
 ---
 
@@ -239,7 +240,8 @@ All 28 tests validate:
 | Version | Features |
 |---|---|
 | 0.1 (MVP) | TD Business Visa parsing, Pandas export, balance validation |
-| 1.1 | OFX / QBO / CSV export, rewards validation, optional dependency extras |
+| 0.2 (Current) | Layered architecture, CSV/OFX/QBO export |
+| 1.0 | Rewards validation, optional dependency extras |
 | 2.0 | Multi-bank strategy (Chase, Amex) |
 
 ---
