@@ -7,7 +7,8 @@ import pytest
 
 from ccparse import TDStatementParser, BalanceMismatchError, DataIntegrityError
 from ccparse.models import BalanceSummary
-from ccparse.parser import _parse_amount, _parse_date, _validate_balance
+from ccparse.infrastructure.pdf_extractor import parse_amount, parse_date
+from ccparse.parsers.td_business_visa import TDBusinessVisaParser
 
 PDF_PATH = Path(__file__).parent.parent / "docs" / "View PDF Statement_2024-08-03.pdf"
 
@@ -18,34 +19,34 @@ PDF_PATH = Path(__file__).parent.parent / "docs" / "View PDF Statement_2024-08-0
 
 class TestParseAmount:
     def test_cr_returns_negative(self):
-        assert _parse_amount("$1,516.49CR") == Decimal("-1516.49")
+        assert parse_amount("$1,516.49CR") == Decimal("-1516.49")
 
     def test_cr_with_space(self):
-        assert _parse_amount("$1,151.02 CR") == Decimal("-1151.02")
+        assert parse_amount("$1,151.02 CR") == Decimal("-1151.02")
 
     def test_positive_amount(self):
-        assert _parse_amount("$365.47") == Decimal("365.47")
+        assert parse_amount("$365.47") == Decimal("365.47")
 
     def test_plus_prefix(self):
-        assert _parse_amount("+$365.47") == Decimal("365.47")
+        assert parse_amount("+$365.47") == Decimal("365.47")
 
     def test_zero(self):
-        assert _parse_amount("$0.00") == Decimal("0.00")
+        assert parse_amount("$0.00") == Decimal("0.00")
 
     def test_invalid_raises(self):
         with pytest.raises(DataIntegrityError):
-            _parse_amount("not-a-number")
+            parse_amount("not-a-number")
 
 
 class TestParseDate:
     def test_no_space(self):
-        assert _parse_date("Jul07", 2024) == date(2024, 7, 7)
+        assert parse_date("Jul07", 2024) == date(2024, 7, 7)
 
     def test_with_space(self):
-        assert _parse_date("Jul 07", 2024) == date(2024, 7, 7)
+        assert parse_date("Jul 07", 2024) == date(2024, 7, 7)
 
     def test_year_boundary(self):
-        assert _parse_date("Jan03", 2025) == date(2025, 1, 3)
+        assert parse_date("Jan03", 2025) == date(2025, 1, 3)
 
 
 class TestValidateBalance:
@@ -65,11 +66,13 @@ class TestValidateBalance:
         return BalanceSummary(**defaults)
 
     def test_valid_passes(self):
-        _validate_balance(self._summary())  # no exception
+        parser = TDBusinessVisaParser()
+        parser._validate_balance(self._summary())  # no exception
 
     def test_mismatch_raises(self):
+        parser = TDBusinessVisaParser()
         with pytest.raises(BalanceMismatchError):
-            _validate_balance(self._summary(new_balance=Decimal("-9999.99")))
+            parser._validate_balance(self._summary(new_balance=Decimal("-9999.99")))
 
 
 # ---------------------------------------------------------------------------
