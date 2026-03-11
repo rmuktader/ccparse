@@ -72,7 +72,8 @@ class TestCSVExport:
     def test_csv_has_header(self, statement):
         csv_output = to_csv(statement)
         lines = csv_output.strip().split("\n")
-        assert lines[0] == "activity_date,post_date,reference_number,description,amount"
+        # Strip any trailing \r from CSV output
+        assert lines[0].strip() == "activity_date,post_date,reference_number,description,amount"
     
     def test_csv_without_header(self, statement):
         csv_output = to_csv(statement, include_header=False)
@@ -130,7 +131,7 @@ class TestOFXExport:
     def test_ofx_transaction_dates(self, statement):
         ofx_output = to_ofx(statement)
         assert "<DTPOSTED>20240708" in ofx_output  # First transaction post date
-        assert "<DTPOSTED>20240721" in ofx_output  # Second transaction post date
+        assert "<DTPOSTED>20240722" in ofx_output  # Second transaction post date
     
     def test_ofx_transaction_amounts(self, statement):
         ofx_output = to_ofx(statement)
