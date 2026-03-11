@@ -53,7 +53,7 @@ def _parse_amount(raw: str) -> Decimal:
 def _parse_date(raw: str, year: int) -> date:
     """Parse 'Jul07' (no space) or 'Jul 07' into a date."""
     if len(raw) > 3 and raw[3].isdigit():
-        raw = raw[:3] + " " + raw[3:]
+        raw = f"{raw[:3]} {raw[3:]}"
     return datetime.strptime(f"{raw} {year}", "%b %d %Y").date()
 
 
