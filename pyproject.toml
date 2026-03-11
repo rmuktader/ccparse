@@ -12,7 +12,7 @@ requires-python = ">=3.11"
 authors = [
     { name = "Rayhan Muktader", email = "rmuktader@gmail.com" }
 ]
-keywords = ["credit card", "pdf", "finance", "statement", "parser", "accounting", "td bank"]
+keywords = ["credit card", "pdf", "finance", "statement", "parser", "accounting", "td bank", "tornto dominion bank"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
