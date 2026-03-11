@@ -45,8 +45,8 @@ def _parse_amount(raw: str) -> Decimal:
     cleaned = re.sub(r"[+\-$,CR\s]", "", raw.upper())
     try:
         value = Decimal(cleaned)
-    except InvalidOperation:
-        raise DataIntegrityError(f"Cannot parse amount: {raw!r}")
+    except InvalidOperation as e:
+        raise DataIntegrityError(f"Cannot parse amount: {raw!r}") from e
     return -value if is_credit else value
 
 
