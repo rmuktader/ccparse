@@ -1,21 +1,8 @@
-import pandas as pd
+"""Backward compatibility layer for export functions.
 
-from .models import Statement
+This module maintains the original API while delegating to the new export service.
+"""
 
+from .export import to_df, to_csv, to_ofx, to_qbo, ExportService
 
-def to_df(statement: Statement) -> pd.DataFrame:
-    rows = [
-        {
-            "activity_date":    t.activity_date,
-            "post_date":        t.post_date,
-            "reference_number": t.reference_number,
-            "description":      t.description,
-            "amount":           float(t.amount),
-        }
-        for t in statement.transactions
-    ]
-    df = pd.DataFrame(rows)
-    if not df.empty:
-        df["activity_date"] = pd.to_datetime(df["activity_date"])
-        df["post_date"]     = pd.to_datetime(df["post_date"])
-    return df
+__all__ = ["to_df", "to_csv", "to_ofx", "to_qbo", "ExportService"]
