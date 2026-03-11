@@ -12,7 +12,7 @@ Parses transactions, balance summaries, and rewards points into structured domai
 - Correctly handles `CR` (credit balance) signage — stored as negative `Decimal` values
 - Validates `Previous Balance + Purchases - Credits + Fees + Interest = New Balance` on every parse; raises `BalanceMismatchError` if it fails
 - All monetary values use `decimal.Decimal` — floating-point arithmetic is never used
-- Exports to a Pandas DataFrame with `datetime64` date columns
+- Exports to multiple formats: Pandas DataFrame, CSV, OFX, and QBO
 - All processing is local — no network calls, no data storage
 - Clean layered architecture with Strategy Pattern for multi-bank extensibility
 
@@ -70,6 +70,39 @@ print(df.dtypes)
 # description              object
 # amount                  float64
 ```
+
+### CSV Export
+
+```python
+from ccparse.export import to_csv
+
+statement = TDStatementParser().parse("path/to/statement.pdf")
+csv_output = to_csv(statement)
+
+# Save to file
+with open("transactions.csv", "w") as f:
+    f.write(csv_output)
+```
+
+### OFX/QBO Export (QuickBooks, Xero, etc.)
+
+```python
+from ccparse.export import to_ofx, to_qbo
+
+statement = TDStatementParser().parse("path/to/statement.pdf")
+
+# OFX format (Open Financial Exchange)
+ofx_output = to_ofx(statement)
+with open("transactions.ofx", "w") as f:
+    f.write(ofx_output)
+
+# QBO format (QuickBooks Online) - same as OFX
+qbo_output = to_qbo(statement)
+with open("transactions.qbo", "w") as f:
+    f.write(qbo_output)
+```
+
+The OFX/QBO export maps `reference_number` to `<FITID>` (Financial Institution Transaction ID), which prevents duplicate imports in accounting software.
 
 ---
 
