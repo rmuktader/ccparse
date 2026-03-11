@@ -14,6 +14,7 @@ Parses transactions, balance summaries, and rewards points into structured domai
 - All monetary values use `decimal.Decimal` — floating-point arithmetic is never used
 - Exports to a Pandas DataFrame with `datetime64` date columns
 - All processing is local — no network calls, no data storage
+- Clean layered architecture with Strategy Pattern for multi-bank extensibility
 
 ---
 
@@ -91,7 +92,35 @@ except DataIntegrityError as e:
 |---|---|
 | `BalanceMismatchError` | Golden Equation validation fails |
 | `DataIntegrityError` | A required field is missing or unparseable |
+| `UnsupportedFormatError` | PDF format is not recognized |
 | `TDParserError` | Base class for all library errors |
+
+---
+
+## Architecture
+
+ccparse uses a clean layered architecture following Domain-Driven Design principles:
+
+```
+┌─────────────────────────────────────────┐
+│         Public API Layer                │
+│  TDStatementParser (backward compat)    │
+├─────────────────────────────────────────┤
+│         Parser Strategy Layer           │
+│  StatementParser (ABC)                  │
+│  └─ TDBusinessVisaParser                │
+├─────────────────────────────────────────┤
+│       Infrastructure Layer              │
+│  PDFExtractor (pdfplumber wrapper)      │
+├─────────────────────────────────────────┤
+│          Domain Layer                   │
+│  Statement, Transaction, etc.           │
+└─────────────────────────────────────────┘
+```
+
+**Strategy Pattern**: The `StatementParser` abstract base class enables multi-bank support. Adding a new bank (Chase, Amex) requires implementing a new parser strategy — no changes to infrastructure or domain layers.
+
+See [docs/architecture-diagram.md](docs/architecture-diagram.md) for detailed architecture documentation.
 
 ---
 
@@ -131,6 +160,23 @@ class BalanceSummary:
 
 ---
 
+## Project Structure
+
+```
+ccparse/
+├── infrastructure/
+│   └── pdf_extractor.py    # PDF extraction utilities
+├── parsers/
+│   ├── base.py             # StatementParser ABC
+│   └── td_business_visa.py # TD Business Visa implementation
+├── models.py               # Domain models
+├── exceptions.py           # Domain exceptions
+├── export.py               # Export utilities
+└── parser.py               # Public API
+```
+
+---
+
 ## Development
 
 ```bash
@@ -139,6 +185,14 @@ cd ccparse
 uv sync
 uv run pytest tests/ -v
 ```
+
+### Running Tests
+
+All 28 tests validate:
+- Unit tests for amount/date parsing and balance validation
+- Integration tests for full statement parsing
+- DataFrame export functionality
+- Golden Equation validation
 
 ---
 
