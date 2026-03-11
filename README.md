@@ -113,6 +113,9 @@ ccparse uses a clean layered architecture following Domain-Driven Design princip
 │       Infrastructure Layer              │
 │  PDFExtractor (pdfplumber wrapper)      │
 ├─────────────────────────────────────────┤
+│       Application Layer                 │
+│  ExportService (to_df, to_csv, etc.)    │
+├─────────────────────────────────────────┤
 │          Domain Layer                   │
 │  Statement, Transaction, etc.           │
 └─────────────────────────────────────────┘
@@ -169,10 +172,12 @@ ccparse/
 ├── parsers/
 │   ├── base.py             # StatementParser ABC
 │   └── td_business_visa.py # TD Business Visa implementation
+├── export/
+│   └── export_service.py   # Export strategies (Pandas, CSV, OFX, QBO)
 ├── models.py               # Domain models
 ├── exceptions.py           # Domain exceptions
-├── export.py               # Export utilities
-└── parser.py               # Public API
+├── export.py               # Export API (backward compat)
+└── parser.py               # Public API (backward compat)
 ```
 
 ---
