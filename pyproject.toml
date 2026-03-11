@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ccparse"
-version = "0.1.1"
+version = "0.4.0"
 description = "Parse credit card PDF statements into structured financial data. Currently supports TD Business Solutions Visa."
 readme = "README.md"
 license = { text = "MIT" }
