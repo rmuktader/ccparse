@@ -71,15 +71,13 @@ def _extract_header(rows: list[list[dict]]) -> dict:
             result["entity"] = row[0]["text"]
 
         if not result.get("suffix") and "AccountNumberEndingin:" in joined:
-            m = re.search(r"(\d{4})$", joined)
-            if m:
-                result["suffix"] = m.group(1)
+            if m := re.search(r"(\d{4})$", joined):
+                result["suffix"] = m[1]
 
-        if not result.get("billing") and top < 70:
-            cleaned = joined.replace(" ", "")
-            m = re.search(r"(\w+\d+,\d{4})-(\w+\d+,\d{4})", cleaned)
-            if m:
-                result["billing"] = (m.group(1), m.group(2))
+        if  m := re.search(
+            r"(\w+\d+,\d{4})-(\w+\d+,\d{4})", joined.replace(" ", "")
+        ):
+            result["billing"] = m[1], m[2]
 
     return result
 
